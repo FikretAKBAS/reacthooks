@@ -1,61 +1,67 @@
-import { useContext, useState, useEffect } from 'react';
-import { EmployeeContext } from '../context/EmployeeContext';
-import { Button, Modal } from 'react-bootstrap';
-import EditForm from './EditForm';
+import { useContext, useState, useEffect } from "react";
+import { EmployeeContext } from "../context/EmployeeContext";
+import { Button, Modal, OverlayTrigger, Tooltip } from "react-bootstrap";
+import EditForm from "./EditForm";
 
 const Employee = ({ employee }) => {
-	const { deleteEmployee } = useContext(EmployeeContext);
-	const [show, setShow] = useState(false);
-	const handleClose = () => setShow(false);
-	const handleShow = () => setShow(true);
+  const { dispatch } = useContext(EmployeeContext);
+  const [show, setShow] = useState(false);
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
 
-	useEffect(() => {
-		handleClose();
-	}, [employee]);
+  useEffect(() => {
+    handleClose();
+  }, [employee]);
 
-	return (
-		<>
-			<td>{employee.name}</td>
-			<td>{employee.email}</td>
-			<td>{employee.address}</td>
-			<td>{employee.phone}</td>
-			<td>
-				<button
-					onClick={handleShow}
-					className="btn text-primary btn-act"
-					data-toggle="modal">
-					<i className="material-icons" data-toggle="tooltip" title="Edit">
-						&#xE254;
-					</i>
-				</button>
-				<button
-					onClick={() => deleteEmployee(employee.id)}
-					className="btn text-danger btn-act"
-					data-toggle="modal">
-					<i className="material-icons" data-toggle="tooltip" title="Delete">
-						&#xE872;
-					</i>
-				</button>
-			</td>
+  return (
+    <>
+      <td>{employee.name}</td>
+      <td>{employee.email}</td>
+      <td>{employee.address}</td>
+      <td>{employee.phone}</td>
+      <td>
+        <OverlayTrigger overlay={<Tooltip id={`tooltip-top`}>Edit</Tooltip>}>
+          <button
+            onClick={handleShow}
+            className="btn text-primary btn-act"
+            data-toggle="modal"
+          >
+            <i className="material-icons">&#xE254;</i>
+          </button>
+        </OverlayTrigger>
 
-			<Modal show={show} onHide={handleClose}>
-				<Modal.Header className="modal-header" closeButton>
-					<Modal.Title>Update Employee</Modal.Title>
-				</Modal.Header>
-				<Modal.Body>
-					<EditForm theEmployee={employee} />
-				</Modal.Body>
-				<Modal.Footer className="d-flex justify-content-start align-items-start">
-					<Button
-						onClick={handleClose}
-						variant="secondary"
-						className="d-flex justify-content-center">
-						Close
-					</Button>
-				</Modal.Footer>
-			</Modal>
-		</>
-	);
+        <OverlayTrigger overlay={<Tooltip id={`tooltip-top`}>Delete</Tooltip>}>
+          <button
+            onClick={() =>
+              dispatch({ type: "remove_employee", id: employee.id })
+            }
+            className="btn text-danger btn-act"
+            data-toggle="modal"
+          >
+            <i className="material-icons">&#xE872;</i>
+          </button>
+        </OverlayTrigger>
+      </td>
+
+      <Modal show={show} onHide={handleClose}>
+        <Modal.Header className="modal-header" closeButton>
+          <Modal.Title>Update Employee</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <EditForm theEmployee={employee} />
+        </Modal.Body>
+        <Modal.Footer className="d-flex justify-content-start align-items-start">
+          <Button
+            onClick={handleClose}
+            variant="secondary"
+            className="d-flex justify-content-center"
+          >
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    </>
+  );
 };
 
 export default Employee;
